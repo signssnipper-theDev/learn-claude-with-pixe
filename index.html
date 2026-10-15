@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Bite-size Pixe lessons on using Claude and Claude Code, each under a minute with a cheat sheet.">
+<meta property="og:title" content="Learn Claude with Pixe">
+<meta property="og:image" content="media/lesson1.jpg">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Learn Claude with Pixe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a night-sky course shelf — header with progress, then one row of 9:16 "reel" cards per part; tapping a card opens a player with the lesson's cheat sheet beside it.
+   Single deliberate dark look, matching the Pixe videos. */
+:root {
+  --sky: #170f2e;
+  --sky-2: #241747;
+  --panel: #2e1f58;
+  --line: #4a3a80;
+  --ink: #f5f1ff;
+  --muted: #b6abd8;
+  --pink: #ff6fa8;
+  --cyan: #5ee0f5;
+  --green: #6fe08f;
+  --yellow: #ffd23f;
+  --font-display: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #3a2470 0%, transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, #2b1a5a 0%, transparent 55%),
+    var(--sky);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-block: 40px 72px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px;
+}
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.wrap { position: relative; z-index: 1; }
+
+/* Header */
+header { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: end; }
+.eyebrow { font-family: var(--font-display); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 14px; color: var(--cyan); display: inline-flex; gap: 10px; align-items: center; }
+.eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(40px, 6vw, 72px); line-height: .98; margin: 10px 0 14px; text-wrap: balance; letter-spacing: -.01em; }
+h1 em { font-style: normal; color: var(--yellow); }
+.lede { color: var(--muted); max-width: 58ch; margin: 0; font-size: 17px; }
+.progress { background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 18px 20px; min-width: 260px; display: grid; gap: 10px; }
+.progress .big { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+.progress .big small { font-size: 16px; color: var(--muted); font-weight: 600; }
+.bar { height: 10px; border-radius: 99px; background: var(--sky-2); overflow: hidden; display: flex; gap: 3px; }
+.bar i { flex: 1; background: var(--line); border-radius: 99px; transition: background .3s; }
+.bar i.done { background: var(--green); }
+.bar i.ready { background: #6c5aa8; }
+.progress .meta { color: var(--muted); font-size: 13px; display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+
+/* Parts */
+section.part { display: grid; gap: 20px; }
+.part-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; border-bottom: 2px dashed var(--line); padding-bottom: 12px; }
+.part-head h2 { font-family: var(--font-display); font-weight: 800; font-size: 30px; margin: 0; line-height: 1.1; }
+.part-head .tag { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 12px; border-radius: 99px; border: 2px solid currentColor; }
+.part-head p { margin: 0; color: var(--muted); flex-basis: 100%; }
+.p1 .tag { color: var(--pink); } .p2 .tag { color: var(--cyan); }
+
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+
+.card { display: grid; align-content: start; gap: 12px; text-align: left; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.card[disabled] { cursor: default; }
+.thumb { position: relative; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 18px; overflow: hidden; border: 3px solid var(--line); background: var(--sky-2); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card:not([disabled]):hover .thumb, .card:focus-visible .thumb { transform: translateY(-4px) rotate(-.6deg); border-color: var(--yellow); box-shadow: 0 14px 30px rgba(0,0,0,.45); }
+.card:focus-visible { outline: none; }
+.play { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 64px; height: 64px; border-radius: 50%; background: var(--yellow); display: grid; place-items: center; box-shadow: 0 6px 0 #b8901a, 0 10px 24px rgba(0,0,0,.4); opacity: 0; scale: .85; transition: opacity .2s, scale .2s; }
+.play svg { width: 26px; height: 26px; margin-left: 4px; fill: var(--sky); }
+.card:not([disabled]):hover .play, .card:focus-visible .play { opacity: 1; scale: 1; }
+.chip { position: absolute; top: 10px; font-family: var(--font-display); font-weight: 800; font-size: 13px; padding: 2px 10px; border-radius: 99px; line-height: 1.5; }
+.chip.num { left: 10px; background: var(--ink); color: var(--sky); }
+.chip.time { right: 10px; background: rgba(23,15,46,.8); color: var(--ink); font-variant-numeric: tabular-nums; }
+.chip.seen { left: 50%; translate: -50% 0; top: auto; bottom: 10px; background: var(--green); color: var(--sky); }
+.card-body { display: grid; gap: 2px; }
+.card-body h3 { font-family: var(--font-display); font-weight: 800; font-size: 19px; line-height: 1.2; margin: 0; }
+.card-body p { margin: 0; color: var(--muted); font-size: 14px; }
+
+.locked .thumb { display: grid; place-items: center; background: repeating-linear-gradient(135deg, var(--sky-2) 0 14px, #20143f 14px 28px); }
+.locked .soon { display: grid; justify-items: center; gap: 10px; padding: 16px; text-align: center; }
+.locked .soon b { font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.locked .soon span { font-size: 13px; color: var(--muted); }
+.mini-pixe { width: 70px; height: 70px; }
+
+/* Player */
+dialog { border: 0; padding: 0; background: transparent; color: var(--ink); max-width: min(1000px, 100vw); width: 100%; max-height: 100%; }
+dialog::backdrop { background: rgba(10, 6, 24, .82); backdrop-filter: blur(6px); }
+.player { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 28px; padding: 24px; background: var(--sky-2); border: 3px solid var(--line); border-radius: 24px; margin: 16px; }
+.player video { width: 100%; aspect-ratio: 9/16; max-height: 78vh; border-radius: 16px; background: #000; display: block; }
+.info { display: grid; gap: 18px; align-content: start; min-width: 0; }
+.info .kicker { font-family: var(--font-display); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; color: var(--cyan); }
+.info h2 { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1.05; margin: 2px 0 0; text-wrap: balance; }
+.info .hook { margin: 0; color: var(--muted); font-size: 17px; }
+.sheet { display: grid; gap: 8px; }
+.sheet h4, .try h4 { font-family: var(--font-display); font-weight: 800; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 4px; color: var(--yellow); }
+.brick { display: grid; grid-template-columns: 28px auto 1fr; gap: 12px; align-items: center; padding: 8px 12px; border-radius: 12px; background: var(--c); color: var(--sky); font-weight: 700; }
+.brick .n { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--sky); display: grid; place-items: center; font-size: 12px; font-family: var(--font-display); }
+.brick .l { font-family: var(--font-display); font-weight: 800; font-size: 16px; letter-spacing: .03em; }
+.brick .s { text-align: right; font-size: 14px; min-width: 0; overflow-wrap: anywhere; }
+.brick code { font-family: var(--font-mono); font-size: 13px; }
+.try { background: var(--panel); border-radius: 14px; padding: 14px 16px; }
+.try ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.try a { color: var(--cyan); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { font-family: var(--font-display); font-weight: 800; font-size: 16px; border: 0; border-radius: 12px; padding: 10px 18px; cursor: pointer; color: var(--sky); background: var(--yellow); box-shadow: 0 4px 0 #b8901a; transition: translate .1s, box-shadow .1s; }
+.btn:active { translate: 0 3px; box-shadow: 0 1px 0 #b8901a; }
+.btn.ghost { background: transparent; color: var(--ink); border: 2px solid var(--line); box-shadow: none; }
+.btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.close { position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--line); background: var(--sky); color: var(--ink); font-size: 20px; cursor: pointer; line-height: 1; }
+
+footer { color: var(--muted); font-size: 13px; border-top: 2px dashed var(--line); padding-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+@media (max-width: 900px) {
+  header { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .player { grid-template-columns: 1fr; padding: 16px; gap: 18px; margin: 0; border-radius: 18px; }
+  .player video { max-height: 62vh; width: auto; max-width: 100%; margin: 0 auto; }
+  .close { top: 10px; right: 10px; }
+}
+@media (max-width: 420px) {
+  .card-body h3 { font-size: 16px; }
+  .progress { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<canvas class="stars" id="stars" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <header>
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Self-learning course · 8 short lessons</span>
+      <h1>Learn Claude <em>with Pixe</em></h1>
+      <p class="lede">Bite-size Reels that take you from your first chat to building apps with Claude Code. Each lesson is under a minute, ends with a cheat sheet, and gives you one thing to try right away.</p>
+    </div>
+    <div class="progress" aria-live="polite">
+      <div class="big"><span id="seenCount">0</span> <small>of <span id="readyCount">6</span> watched</small></div>
+      <div class="bar" id="bar"></div>
+      <div class="meta"><span id="runtime">5 min of video</span><span>2 lessons coming soon</span></div>
+    </div>
+  </header>
+
+  <section class="part p1">
+    <div class="part-head">
+      <h2>The Claude app</h2><span class="tag">Part 1</span>
+      <p>Chat, prompt, work with files and make Claude remember you.</p>
+    </div>
+    <div class="grid" id="grid1"></div>
+  </section>
+
+  <section class="part p2">
+    <div class="part-head">
+      <h2>Claude Code</h2><span class="tag">Part 2</span>
+      <p>Install it, build your first app, and learn the loop that keeps your work safe.</p>
+    </div>
+    <div class="grid" id="grid2"></div>
+  </section>
+
+  <footer>
+    <span>Pixe is an original character. Voice: ElevenLabs.</span>
+    <span>Independent creator, not affiliated with Anthropic.</span>
+  </footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="pTitle">
+  <div class="player" style="position:relative">
+    <video id="vid" controls playsinline preload="metadata"></video>
+    <div class="info">
+      <div>
+        <div class="kicker" id="pKicker"></div>
+        <h2 id="pTitle"></h2>
+      </div>
+      <p class="hook" id="pHook"></p>
+      <div class="sheet" id="pSheet"></div>
+      <div class="try" id="pTry"></div>
+      <div class="actions">
+        <button class="btn" id="nextBtn" type="button">Next lesson →</button>
+        <button class="btn ghost" id="doneBtn" type="button">Mark as watched</button>
+      </div>
+    </div>
+    <button class="close" id="closeBtn" type="button" aria-label="Close player">✕</button>
+  </div>
+</dialog>
+
+<script>
+const C = { pink: "var(--pink)", cyan: "var(--cyan)", green: "var(--green)", yellow: "var(--yellow)", orange: "#ff9f5a" };
+const LESSONS = [
+  { n: 1, part: 1, title: "Conversation basics", hook: "Your AI answers are mid? Ask better follow-ups.", dur: 50.2,
+    sheetTitle: "Steer any answer", sheet: [["SHORTER", "cut it in half", "pink"], ["FUNNIER", "change the tone", "cyan"], ["+ TABLE", "change the format", "green"]],
+    tryIt: ["Ask Claude one question three different ways", "Turn on web search and ask about something from this week", "Reply “shorter” or “make it a table” instead of starting over"],
+    link: ["Open Claude", "https://claude.ai"] },
+  { n: 2, part: 1, title: "Prompting well", hook: "Your prompts are missing 4 bricks.", dur: 33.05,
+    sheetTitle: "The 4-brick prompt", sheet: [["CONTEXT", "who you are", "pink"], ["GOAL", "what you want", "cyan"], ["AUDIENCE", "who it's for", "green"], ["FORMAT", "how it looks", "yellow"]],
+    tryIt: ["Rewrite one lazy prompt using all 4 bricks", "Compare the two answers side by side"],
+    link: ["Anthropic prompting guide", "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview"] },
+  { n: 3, part: 1, title: "Files, research & outputs", hook: "Claude has 4 superpowers. Stop copy-pasting.", dur: 43.03,
+    sheetTitle: "Claude's 4 superpowers", sheet: [["FILES", "drop PDFs + pics", "pink"], ["SEARCH", "fresh info + sources", "cyan"], ["DOCS", "decks, docs, sheets", "green"], ["APPS", "quizzes, calculators", "yellow"]],
+    tryIt: ["Upload your class notes and ask for a 5-slide study deck plus a quiz", "Ask a research question and check the sources it links"],
+    link: ["Open Claude", "https://claude.ai"] },
+  { n: 4, part: 1, title: "Projects, memory, connectors & skills", hook: "Stop re-explaining yourself to Claude.", dur: 61.35,
+    sheetTitle: "Make Claude know you", sheet: [["PROJECTS", "files + instructions", "pink"], ["MEMORY", "Settings → Memory", "cyan"], ["CONNECTORS", "Drive, Slack + more", "green"], ["SKILLS", "reusable how-tos", "yellow"]],
+    tryIt: ["Make a Project for one class or hobby and add your notes", "Turn on memory in Settings", "Connect one app you use every day"],
+    link: ["Claude help center", "https://support.claude.com"] },
+  { n: 5, part: 2, title: "Setup & first session", hook: "Build your first app in 4 steps.", dur: 51.06,
+    sheetTitle: "First session in 4 steps", sheet: [["INSTALL", "<code>claude.ai/install</code>", "pink"], ["OPEN", "<code>cd my-project</code>", "cyan"], ["TYPE", "<code>claude</code>", "green"], ["ASK", "plain English", "yellow"]],
+    tryIt: ["Install Claude Code (needs a paid Claude plan)", "Make an empty folder and run <code>claude</code> inside it", "Ask for a one-page site about something you love"],
+    link: ["Claude Code quickstart", "https://code.claude.com/docs"] },
+  { n: 6, part: 2, title: "The core loop", hook: "Never lose your code again.", dur: 52.5,
+    sheetTitle: "The safe loop", sheet: [["DESCRIBE", "one small change", "pink"], ["REVIEW", "read the diff", "cyan"], ["TEST", "run it", "green"], ["COMMIT", "“commit this”", "yellow"], ["OOPS?", "Esc Esc = rewind", "orange"]],
+    tryIt: ["Ask for one small change, then read the diff before saying yes", "Ask Claude to commit it with git", "Press Esc twice to see the rewind menu"],
+    link: ["Claude Code docs", "https://code.claude.com/docs"] },
+  { n: 7, part: 2, title: "Steering it well", hook: "Give Claude a rulebook: CLAUDE.md and plan mode.", soon: true },
+  { n: 8, part: 2, title: "Going further", hook: "Bug? Let it hunt, then write the tests.", soon: true },
+];
+const READY = LESSONS.filter(l => !l.soon);
+const KEY = "pixe-course-watched";
+let seen = new Set();
+try { seen = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...seen])); } catch (e) {} };
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
+
+const PIXE = `<svg class="mini-pixe" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="8" x2="50" y2="22" stroke="#b6abd8" stroke-width="4"/><circle cx="50" cy="8" r="6" fill="#ffd23f"/><rect x="18" y="22" width="64" height="56" rx="14" fill="#f5f1ff"/><rect x="26" y="30" width="48" height="40" rx="9" fill="#170f2e"/><path d="M37 52 q5 -6 10 0 M53 52 q5 -6 10 0" stroke="#5ee0f5" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="34" y="78" width="8" height="12" fill="#f5f1ff"/><rect x="58" y="78" width="8" height="12" fill="#f5f1ff"/></svg>`;
+
+function card(l) {
+  if (l.soon) {
+    return `<button class="card locked" disabled aria-label="Lesson ${l.n}: ${l.title}, coming soon">
+      <div class="thumb"><span class="chip num">${l.n}</span><div class="soon">${PIXE}<b>Coming soon</b><span>Pixe is still recording</span></div></div>
+      <div class="card-body"><h3>${l.title}</h3><p>${l.hook}</p></div></button>`;
+  }
+  return `<button class="card" data-n="${l.n}" aria-label="Play lesson ${l.n}: ${l.title}">
+    <div class="thumb"><img src="media/lesson${l.n}.jpg" alt="" loading="lazy">
+      <span class="chip num">${l.n}</span><span class="chip time">${fmt(l.dur)}</span>
+      ${seen.has(l.n) ? '<span class="chip seen">✓ Watched</span>' : ""}
+      <span class="play"><svg viewBox="0 0 24 24"><path d="M5 3l16 9-16 9z"/></svg></span></div>
+    <div class="card-body"><h3>${l.title}</h3><p>${l.hook}</p></div></button>`;
+}
+function render() {
+  document.getElementById("grid1").innerHTML = LESSONS.filter(l => l.part === 1).map(card).join("");
+  document.getElementById("grid2").innerHTML = LESSONS.filter(l => l.part === 2).map(card).join("");
+  document.getElementById("seenCount").textContent = READY.filter(l => seen.has(l.n)).length;
+  document.getElementById("readyCount").textContent = READY.length;
+  document.getElementById("runtime").textContent = `${Math.round(READY.reduce((a, l) => a + l.dur, 0) / 60)} min of video`;
+  document.getElementById("bar").innerHTML = LESSONS.map(l => `<i class="${seen.has(l.n) ? "done" : l.soon ? "" : "ready"}" title="Lesson ${l.n}"></i>`).join("");
+  document.querySelectorAll(".card[data-n]").forEach(b => b.addEventListener("click", () => open(+b.dataset.n)));
+}
+
+const dlg = document.getElementById("dlg"), vid = document.getElementById("vid");
+let cur = null;
+function open(n) {
+  const l = LESSONS.find(x => x.n === n); if (!l || l.soon) return;
+  cur = l;
+  vid.poster = `media/lesson${n}.jpg`;
+  vid.src = `media/lesson${n}.mp4`;
+  document.getElementById("pKicker").textContent = `Part ${l.part} · Lesson ${l.n} · ${fmt(l.dur)}`;
+  document.getElementById("pTitle").textContent = l.title;
+  document.getElementById("pHook").textContent = l.hook;
+  document.getElementById("pSheet").innerHTML = `<h4>${l.sheetTitle}</h4>` + l.sheet.map((s, i) =>
+    `<div class="brick" style="--c:${C[s[2]]}"><span class="n">${i + 1}</span><span class="l">${s[0]}</span><span class="s">${s[1]}</span></div>`).join("");
+  document.getElementById("pTry").innerHTML = `<h4>Try it now</h4><ul>${l.tryIt.map(t => `<li>${t}</li>`).join("")}<li><a href="${l.link[1]}" target="_blank" rel="noopener">${l.link[0]} ↗</a></li></ul>`;
+  const nxt = READY.find(x => x.n > n);
+  const nb = document.getElementById("nextBtn"); nb.hidden = !nxt; if (nxt) nb.onclick = () => open(nxt.n);
+  updateDone();
+  if (!dlg.open) dlg.showModal();
+  try { history.replaceState(null, "", "#lesson" + n); } catch (e) {}
+  vid.play().catch(() => {});
+}
+function updateDone() { const d = document.getElementById("doneBtn"); d.textContent = seen.has(cur.n) ? "✓ Watched" : "Mark as watched"; }
+function markSeen(n) { if (!seen.has(n)) { seen.add(n); save(); render(); } if (cur) updateDone(); }
+document.getElementById("doneBtn").onclick = () => { if (seen.has(cur.n)) { seen.delete(cur.n); save(); render(); updateDone(); } else markSeen(cur.n); };
+vid.addEventListener("timeupdate", () => { if (cur && vid.duration && vid.currentTime / vid.duration > 0.9) markSeen(cur.n); });
+document.getElementById("closeBtn").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+dlg.addEventListener("close", () => { vid.pause(); vid.removeAttribute("src"); vid.load(); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} });
+
+render();
+const m = /^#lesson(\d)$/.exec(location.hash); if (m) open(+m[1]);
+
+// twinkling stars, drawn once per resize; static when reduced motion is on
+(function stars() {
+  const cv = document.getElementById("stars"), cx = cv.getContext("2d");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let pts = [];
+  function size() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; cv.style.width = innerWidth + "px"; cv.style.height = innerHeight + "px";
+    pts = Array.from({ length: Math.round(innerWidth * innerHeight / 9000) }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: (Math.random() * 1.3 + .4) * devicePixelRatio, p: Math.random() * 6.28 })); }
+  function draw(t) { cx.clearRect(0, 0, cv.width, cv.height);
+    for (const s of pts) { cx.globalAlpha = still ? .6 : .35 + .35 * Math.sin(t / 900 + s.p); cx.fillStyle = "#f5f1ff"; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.28); cx.fill(); }
+    if (!still) requestAnimationFrame(draw); }
+  size(); addEventListener("resize", size); requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
